@@ -1,7 +1,12 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
 
 
 @theme {
+    --default-font-family: 'Jost', sans-serif;
+    --font-family: var(--default-font-family);
+    --font-size-base: 16px;
+
     --color-primary-50: #fefce8;
     --color-primary-100: #fdf9c4;
     --color-primary-200: #fdef8b;
@@ -17,7 +22,9 @@
     --color-background: #0e0e10;
     --color-surface: #18181b;
     --color-border: #27272a;
-    --color-text-primary: #e4e4e7;
+    --color-on-surface: #eee;
+    --color-on-primary: #111;
+
 
     --color-sunset-100: #fde6e3;
     --color-sunset-200: #fdd1cb;
@@ -53,4 +60,5 @@ body {
     display: flex;
     justify-content: center;
     min-height: 100%;
+    width: 100%;
 }

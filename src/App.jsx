@@ -2,7 +2,12 @@ import { useState } from "react";
 
 import Navbar from "./components/Navbar";
 import Header from "./components/Header";
-import { HighLevelQualitative, Averages } from "./components/Insights";
+
+import HighLevelQualitative from "./components/Insights/HighLevelQualitative";
+import Averages from "./components/Insights/Averages";
+import EngagementGraph from "./components/Insights/EngagementGraph";
+import Issues from "./components/Issues";
+import Drawer from "./components/Insights/Drawer";
 
 
 function App() {
@@ -17,10 +22,12 @@ function App() {
                     <div className="px-64">
                         <HighLevelQualitative />
                         <Averages />
+                        <EngagementGraph />
                     </div>
                     :
-                    <div>
-                        ISSUES
+                    <div className="px-64 mt-16">
+                        <Issues />
+                        <Drawer />
                     </div>
                 }
             </main>

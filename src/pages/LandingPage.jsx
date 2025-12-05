@@ -1,5 +1,6 @@
-import { Stars, Radar, SearchIcon, PlusIcon, X } from 'lucide-react';
 import { useState } from 'react';
+import { Stars, Radar, SearchIcon, PlusIcon, X } from 'lucide-react';
+import TextField from '../components/TextField';
 
 
 function LandingPage() {

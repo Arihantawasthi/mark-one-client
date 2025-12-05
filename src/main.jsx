@@ -1,27 +1,28 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
-import './index.css'
+import "./index.css"
 
-import App from './App.jsx'
-import LandingPage from './LandingPage.jsx'
-import RootErrorBoundary from './RootErrorBoundary.jsx'
+import LandingPage from "./pages/LandingPage.jsx"
+import Analysis from "./pages/Analysis.jsx"
+import RootErrorBoundary from "./components/RootErrorBoundary.jsx"
+
 
 const router = createBrowserRouter([
     {
-        path: '/',
+        path: "/",
         element: <LandingPage />,
         errorElement: <RootErrorBoundary />,
     },
     {
-        path: '/analysis',
-        element: <App />,
+        path: "/analysis",
+        element: <Analysis />,
         errorElement: <RootErrorBoundary />,
     }
 ]);
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
     <StrictMode>
         <RouterProvider router={router} />
     </StrictMode>,

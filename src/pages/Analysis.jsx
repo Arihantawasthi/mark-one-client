@@ -1,16 +1,16 @@
 import { useState } from "react";
 
-import Navbar from "./components/Navbar";
-import Header from "./components/Header";
+import Navbar from "../components/Navbar";
+import Header from "../components/Header";
 
-import HighLevelQualitative from "./components/Insights/HighLevelQualitative";
-import Averages from "./components/Insights/Averages";
-import EngagementGraph from "./components/Insights/EngagementGraph";
-import Issues from "./components/Issues";
-import Drawer from "./components/Insights/Drawer";
+import HighLevelQualitative from "../components/Insights/HighLevelQualitative";
+import Averages from "../components/Insights/Averages";
+import EngagementGraph from "../components/Insights/EngagementGraph";
+import Issues from "../components/Issues";
+import Drawer from "../components/Insights/Drawer";
 
 
-function App() {
+function Analysis() {
     const [currentView, setCurrentView] = useState("insights");
 
     return (
@@ -36,4 +36,4 @@ function App() {
 }
 
 
-export default App;
+export default Analysis;

@@ -2,9 +2,23 @@ import { useState } from 'react';
 import { Stars, Radar, SearchIcon, PlusIcon, X, ScanSearch } from 'lucide-react';
 import TextField from '../components/TextField';
 
+import { useNavigate } from 'react-router-dom';
+import useAnalysis from '../context/useAnalysis';
+import { validateNewsletterUrl } from '../utils/helpers';
+
 
 function LandingPage() {
     const [ activeCard, setActiveCard ] = useState("market");
+    const navigate = useNavigate();
+    const { marketQueries, newsletterLinks } = useAnalysis();
+
+    const handleStartAnalysis = () => {
+        if (activeCard === "market") {
+            console.log(marketQueries);
+        } else if (activeCard === "newsletter") {
+            console.log(newsletterLinks);
+        }
+    }
 
     return  (
         <div className="min-h-screen flex flex-col items-center justify-center border border-border bg-app-bg text-center p-8">
@@ -29,7 +43,10 @@ function LandingPage() {
                     onActive={() => setActiveCard("newsletter")}
                 />
             </div>
-            <button className="bg-primary-500 text-on-primary px-6 py-3 rounded-2xl font-bold hover:opacity-90 transition active:scale-95 cursor-pointer">
+            <button
+                className="bg-primary-500 text-on-primary px-6 py-3 rounded-2xl font-bold hover:opacity-90 transition active:scale-70 cursor-pointer"
+                onClick={handleStartAnalysis}
+            >
                 Start Analysis!
             </button>
         </div>
@@ -37,20 +54,30 @@ function LandingPage() {
 }
 
 function NewsletterAnalysisCard({ isActive, onActive }) {
-    const [ links, setLinks ] = useState([]);
     const [ linkInput, setLinkInput ] = useState("");
+    const [ error, setError ] = useState("");
+    const [ shake, setShake ] = useState(false);
+    const { newsletterLinks, addNewsletterLink, removeNewsletterLink } = useAnalysis();
 
     const addQuery = () => {
-        if (linkInput.trim() !== "") {
-            setLinks([...links, linkInput.trim()]);
-            setLinkInput("");
+        const result = validateNewsletterUrl(linkInput);
+
+        if (!result.valid) {
+            setError(result.message);
+            setShake(true);
+            setTimeout(() => setShake(false), 500);
+            return;
         }
+
+        addNewsletterLink(linkInput);
+        setLinkInput("");
     };
 
     return (
         <div className={`text-left bg-surface text-on-surface p-8 rounded-4xl shadow-md relative
                         mx-auto ${ isActive ? "border border-primary-500" : "border-none" }
-                        transition w-[600px] max-w-[600px] overflow-hidden active:scale-95`}
+                        transition w-[600px] max-w-[600px] overflow-hidden
+                        ${ shake ? "shake border-sunset-500" : "" }`}
             onClick={onActive}
         >
             { !isActive && <div className="absolute w-full h-full top-0 left-0 bg-background opacity-70 transition hover:opacity-50"></div> }
@@ -63,15 +90,15 @@ function NewsletterAnalysisCard({ isActive, onActive }) {
             <h1 className="text-4xl font-bold mb-2">Newsletter Analysis</h1>
             <p className="text-on-surface/80 mb-6">Analyze newsletters to uncover key insights and strategies.</p>
 
-            { links.length > 0 &&
+            { newsletterLinks.length > 0 &&
                 <div className="flex items-center gap-y-2 gap-x-4 mb-2 flex-wrap">
-                    { links.map((query, index) => (
+                    { newsletterLinks.map((query, index) => (
                         <div key={index} className="flex items-center gap-x-1 bg-surface/50 text-xs rounded-xl p-2 border border-border">
                             <span>{ query }</span>
                             <X
                                 size={16}
                                 className="inline ml-1 cursor-pointer text-on-surface/60 hover:text-on-surface"
-                                onClick={() => setLinks(links.filter((_, i) => i !== index))}
+                                onClick={() => removeNewsletterLink(index)}
                             />
                         </div>
                     ))}
@@ -83,10 +110,17 @@ function NewsletterAnalysisCard({ isActive, onActive }) {
                     placeholder="e.g. https://example.substack.com/"
                     leftIcon=<SearchIcon size={16} className="text-on-surface/60" />
                     value={linkInput}
-                    onChange={e => setLinkInput(e.target.value)}
+                    onChange={e => {
+                        setLinkInput(e.target.value);
+                        setError("")
+                    }}
+                    error={error}
                 />
-                <button className="bg-primary-500 rounded-lg p-2 hover:opacity-90 transitio flex items-center justify-center active:scale-95 cursor-pointer">
-                    <PlusIcon size={24} className="text-on-primary" onClick={addQuery}/>
+                <button
+                    className="bg-primary-500 rounded-lg p-2 hover:opacity-90 transition flex items-center justify-center active:scale-95 cursor-pointer"
+                    onClick={addQuery}
+                >
+                    <PlusIcon size={24} className="text-on-primary" />
                 </button>
             </div>
         </div>
@@ -94,20 +128,18 @@ function NewsletterAnalysisCard({ isActive, onActive }) {
 }
 
 function MarketScoutCard({ isActive, onActive }) {
-    const [ queries, setQueries ] = useState([]);
     const [ queryInput, setQueryInput ] = useState("");
+    const { marketQueries, addMarketQuery, removeMarketQuery } = useAnalysis();
 
     const addQuery = () => {
-        if (queryInput.trim() !== "") {
-            setQueries([...queries, queryInput.trim()]);
-            setQueryInput("");
-        }
+        addMarketQuery(queryInput);
+        setQueryInput("");
     };
 
     return (
         <div className={`text-left bg-surface text-on-surface p-8 rounded-4xl shadow-md relative
                          overflow-hidden mx-auto ${ isActive ? "border border-primary-500" : "border-none" }
-                         transition w-[600px] max-w-[600px] active:scale-95`}
+                         transition w-[600px] max-w-[600px]`}
             onClick={onActive}
         >
             { !isActive && <div className="absolute w-full h-full top-0 left-0 bg-background opacity-70 transition hover:opacity-50"></div> }
@@ -120,15 +152,15 @@ function MarketScoutCard({ isActive, onActive }) {
             <h1 className="text-4xl font-bold mb-2">Market Scout</h1>
             <p className="text-on-surface/80 mb-6">Discover competitors by analyzing markets and niches.</p>
 
-            { queries.length > 0 &&
+            { marketQueries.length > 0 &&
                 <div className="flex items-center gap-y-2 gap-x-4 mb-2 flex-wrap">
-                    { queries.map((query, index) => (
+                    { marketQueries.map((query, index) => (
                         <div key={index} className="flex items-center gap-x-1 bg-surface/50 text-xs rounded-xl p-2 border border-border">
                             <span>{ query }</span>
                             <X
                                 size={16}
                                 className="inline ml-1 cursor-pointer text-on-surface/60 hover:text-on-surface"
-                                onClick={() => setQueries(queries.filter((_, i) => i !== index))}
+                                onClick={() => removeMarketQuery(index)}
                             />
                         </div>
                     ))}
@@ -142,8 +174,11 @@ function MarketScoutCard({ isActive, onActive }) {
                     value={queryInput}
                     onChange={e => setQueryInput(e.target.value)}
                 />
-                <button className="bg-primary-500 rounded-lg p-2 hover:opacity-90 transitio flex items-center justify-center active:scale-95 cursor-pointer">
-                    <PlusIcon size={24} className="text-on-primary" onClick={addQuery}/>
+                <button
+                    className="bg-primary-500 rounded-lg p-2 hover:opacity-90 transition flex items-center justify-center active:scale-95 cursor-pointer"
+                    onClick={addQuery}
+                >
+                    <PlusIcon size={24} className="text-on-primary" />
                 </button>
             </div>
         </div>

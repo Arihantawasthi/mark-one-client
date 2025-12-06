@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 import "./index.css"
 
+import { AnalysisProvider } from "./context/AnalysisContext.jsx"
 import LandingPage from "./pages/LandingPage.jsx"
 import Analysis from "./pages/Analysis.jsx"
 import RootErrorBoundary from "./components/RootErrorBoundary.jsx"
@@ -24,6 +25,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <RouterProvider router={router} />
+        <AnalysisProvider>
+            <RouterProvider router={router} />
+        </AnalysisProvider>
     </StrictMode>,
 )

@@ -1,8 +1,11 @@
-function TextField({ label, leftIcon, rightIcon, placeholder, value, onChange }) {
+function TextField({ label, leftIcon, rightIcon, placeholder, value, onChange, error }) {
     return (
         <div className="flex flex-col gap-y-2 font-regular w-full">
             { label && <span className="text-on-surface/50">{ label }</span> }
-            <div className="py-2 px-4 flex items-center gap-x-3 rounded-xl bg-page-color border border-border focus-within:border-primary-500">
+            <div
+                className={`py-2 px-4 flex items-center gap-x-3 rounded-xl bg-page-color
+                            border ${ error ? "border-sunset-500" : "border-border" } focus-within:border-primary-500`}
+            >
                 { leftIcon &&
                     <span className="h-6 w-6 flex items-center justify-center">
                         { leftIcon }
@@ -21,6 +24,7 @@ function TextField({ label, leftIcon, rightIcon, placeholder, value, onChange })
                     </span>
                 }
             </div>
+            { error && <p className="text-sunset-500 text-sm">{ error }</p> }
         </div>
     );
 }

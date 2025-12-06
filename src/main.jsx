@@ -4,10 +4,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 import "./index.css"
 
-import { AnalysisProvider } from "./context/AnalysisContext.jsx"
-import LandingPage from "./pages/LandingPage.jsx"
-import Analysis from "./pages/Analysis.jsx"
-import RootErrorBoundary from "./components/RootErrorBoundary.jsx"
+import { AppProvider } from "./context/AppContext"
+import LandingPage from "./pages/LandingPage"
+import Analysis from "./pages/Analysis"
+import RootErrorBoundary from "./components/RootErrorBoundary"
+import Banner from "./components/Banner"
 
 
 const router = createBrowserRouter([
@@ -25,8 +26,9 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <AnalysisProvider>
+        <AppProvider>
+            <Banner />
             <RouterProvider router={router} />
-        </AnalysisProvider>
+        </AppProvider>
     </StrictMode>,
 )

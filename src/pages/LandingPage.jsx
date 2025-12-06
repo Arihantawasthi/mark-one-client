@@ -3,17 +3,33 @@ import { Stars, Radar, SearchIcon, PlusIcon, X, ScanSearch } from 'lucide-react'
 import TextField from '../components/TextField';
 
 import { useNavigate } from 'react-router-dom';
-import useAnalysis from '../context/useAnalysis';
+import useAppContext from '../context/useAppContext';
 import { validateNewsletterUrl } from '../utils/helpers';
 
 
 function LandingPage() {
     const [ activeCard, setActiveCard ] = useState("market");
     const navigate = useNavigate();
-    const { marketQueries, newsletterLinks } = useAnalysis();
+    const { marketQueries, newsletterLinks } = useAppContext();
 
-    const handleStartAnalysis = () => {
+    async function handleStartAnalysis() {
         if (activeCard === "market") {
+            const res = await fetch('http://localhost:8000/api/v1/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ queries: marketQueries }),
+            });
+
+            if (!res.ok) {
+                console.error('Failed to start market analysis');
+                return;
+            }
+            const data = await res.json();
+            console.log(data);
+            navigate('/analysis');
+
             console.log(marketQueries);
         } else if (activeCard === "newsletter") {
             console.log(newsletterLinks);
@@ -57,7 +73,7 @@ function NewsletterAnalysisCard({ isActive, onActive }) {
     const [ linkInput, setLinkInput ] = useState("");
     const [ error, setError ] = useState("");
     const [ shake, setShake ] = useState(false);
-    const { newsletterLinks, addNewsletterLink, removeNewsletterLink } = useAnalysis();
+    const { newsletterLinks, addNewsletterLink, removeNewsletterLink } = useAppContext();
 
     const addQuery = () => {
         const result = validateNewsletterUrl(linkInput);
@@ -129,7 +145,7 @@ function NewsletterAnalysisCard({ isActive, onActive }) {
 
 function MarketScoutCard({ isActive, onActive }) {
     const [ queryInput, setQueryInput ] = useState("");
-    const { marketQueries, addMarketQuery, removeMarketQuery } = useAnalysis();
+    const { marketQueries, addMarketQuery, removeMarketQuery } = useAppContext();
 
     const addQuery = () => {
         addMarketQuery(queryInput);

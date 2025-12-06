@@ -1,13 +1,13 @@
-import { AnalysisContext } from "./AnalysisContext";
+import { AppContext } from "./AppContext";
 import { useContext } from "react";
 
 
-function useAnalysis() {
-    const context = useContext(AnalysisContext);
+function useAppContext() {
+    const context = useContext(AppContext);
     if (!context) {
         throw new Error("useAnalysis must be used within an AnalysisProvider");
     }
     return context;
 }
 
-export default useAnalysis;
+export default useAppContext;

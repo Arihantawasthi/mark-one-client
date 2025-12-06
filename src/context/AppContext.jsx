@@ -1,10 +1,16 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useState } from 'react';
 
-const AnalysisContext = createContext(null);
+const AppContext = createContext(null);
 
-function AnalysisProvider({ children }) {
+function AppProvider({ children }) {
     const [marketQueries, setMarketQueries] = useState([]);
     const [newsletterLinks, setNewsletterLinks] = useState([]);
+    const [banner, setBanner] = useState({
+        title: "",
+        description: "",
+        type: "", // "success", "error", "info"
+        visible: false
+    });
 
     const addMarketQuery = (query) => {
         if (marketQueries.includes(query)) return;
@@ -28,18 +34,37 @@ function AnalysisProvider({ children }) {
         setNewsletterLinks(newsletterLinks.filter((_, i) => i !== index));
     }
 
+    const showBanner = (title, description, type) => {
+        setBanner({
+            title,
+            description,
+            type,
+            visible: true
+        });
+        setTimeout(() => {
+            setBanner(prev => ({ ...prev, visible: false }));
+        }, 4000);
+    }
+
+    const hideBanner = () => {
+        setBanner(prev => ({ ...prev, visible: false }));
+    }
+
     return (
-        <AnalysisContext.Provider value={{
+        <AppContext.Provider value={{
             marketQueries,
             addMarketQuery,
             newsletterLinks,
             addNewsletterLink,
             removeMarketQuery,
-            removeNewsletterLink
+            removeNewsletterLink,
+            banner,
+            showBanner,
+            hideBanner
         }}>
             {children}
-        </AnalysisContext.Provider>
+        </AppContext.Provider>
     );
 }
 
-export { AnalysisProvider, AnalysisContext };
+export { AppProvider, AppContext };

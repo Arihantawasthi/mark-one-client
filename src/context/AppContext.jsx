@@ -34,7 +34,7 @@ function AppProvider({ children }) {
         setNewsletterLinks(newsletterLinks.filter((_, i) => i !== index));
     }
 
-    const showBanner = (title, description, type) => {
+    const showBanner = ({ title, description, type }) => {
         setBanner({
             title,
             description,

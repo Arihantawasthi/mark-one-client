@@ -1,36 +1,53 @@
 import { useState } from 'react';
-import { Stars, Radar, SearchIcon, PlusIcon, X, ScanSearch } from 'lucide-react';
+import { Stars, Radar, SearchIcon, PlusIcon, X, ScanSearch, Loader } from 'lucide-react';
 import TextField from '../components/TextField';
 
 import { useNavigate } from 'react-router-dom';
 import useAppContext from '../context/useAppContext';
 import { validateNewsletterUrl } from '../utils/helpers';
 
+import { createMarketScoutRequest } from '../api/requests';
+import useProvideGoPost from '../hooks/useProvideGoPost';
+
 
 function LandingPage() {
     const [ activeCard, setActiveCard ] = useState("market");
     const navigate = useNavigate();
-    const { marketQueries, newsletterLinks } = useAppContext();
+    const { marketQueries, newsletterLinks, showBanner } = useAppContext();
+    const { loading, goPost } = useProvideGoPost();
 
-    async function handleStartAnalysis() {
+    const handleStartAnalysis = async () => {
         if (activeCard === "market") {
-            const res = await fetch('http://localhost:8000/api/v1/search', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ queries: marketQueries }),
-            });
-
-            if (!res.ok) {
-                console.error('Failed to start market analysis');
+            if (marketQueries.length === 0) {
+                showBanner({
+                    title: "Error!",
+                    description: "Please add at least one market query to proceed.",
+                    type: "error"
+                });
                 return;
             }
-            const data = await res.json();
-            console.log(data);
-            navigate('/analysis');
 
-            console.log(marketQueries);
+            const onSuccess = data => {
+                showBanner({
+                    title: "Success!",
+                    description: "Your market analysis has been initiated successfully.",
+                    type: "success"
+                });
+                console.log(data);
+                navigate('/analysis');
+            }
+
+            const onError = () => {
+                showBanner({
+                    title: "Error!",
+                    description: "Failed to start market analysis",
+                    type: "error"
+                });
+            }
+
+            const { url, body } = createMarketScoutRequest(marketQueries);
+            await goPost(url, body, { onSuccess, onError });
+
         } else if (activeCard === "newsletter") {
             console.log(newsletterLinks);
         }
@@ -63,7 +80,7 @@ function LandingPage() {
                 className="bg-primary-500 text-on-primary px-6 py-3 rounded-2xl font-bold hover:opacity-90 transition active:scale-70 cursor-pointer"
                 onClick={handleStartAnalysis}
             >
-                Start Analysis!
+                { loading ? <Loader size={16} className="text-on-primary animate-spin" /> : "Start Analysis!" }
             </button>
         </div>
     );

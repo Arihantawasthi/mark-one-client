@@ -5,7 +5,7 @@ function Header({ currentView, setCurrentView }) {
     const nicheInput = "Tech Newsletters";
 
     return (
-        <header className="w-full bg-surface border-b border-border px-64 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <header className="w-full bg-surface border-b border-border px-28 2xl:px-64 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center pl-10 md:pl-0">
                 <h2 className="font-bold text-2xl text-on-surface">Analysis: <span className="text-lg text-primary-500">{nicheInput}</span></h2>
             </div>

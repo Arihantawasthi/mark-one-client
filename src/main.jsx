@@ -18,7 +18,7 @@ const router = createBrowserRouter([
         errorElement: <RootErrorBoundary />,
     },
     {
-        path: "/analysis",
+        path: "/analysis/:analysisId",
         element: <Analysis />,
         errorElement: <RootErrorBoundary />,
     }

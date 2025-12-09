@@ -17,6 +17,10 @@ export function getWebSocketUrl(analysisId) {
     return `ws://localhost:8000/api/v1/status/${analysisId}`;
 }
 
+export function getMockWebSocketUrl(analysisId=1) {
+    return `ws://localhost:8000/api/v1/test-status`;
+}
+
 export function createGetAnalysisRequest(analysisId) {
     return `${BASE_URL}/analysis/${analysisId}`;
 }

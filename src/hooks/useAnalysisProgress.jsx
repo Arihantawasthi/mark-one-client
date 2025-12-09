@@ -1,17 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 import { checkAnalysisStatus, getAnalysis } from "../api/apiClient";
-import { getWebSocketUrl } from "../api/requests";
+import { getMockWebSocketUrl, getWebSocketUrl } from "../api/requests";
 
 export function useAnalysisProgress(analysisId) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [analysisResult, setAnalysisResult] = useState(null);
-    const [statusData, setStatusData] = useState({
+    const [statusData, setStatusData] = useState([{
         progress: 0,
         title: "Initializing...",
-        message: "Preparing to scan...",
+        detail: "Preparing to scan...",
         analysisId: analysisId,
-    });
+    }]);
+    const [isStatusOpen, setIsStatusOpen] = useState(true);
+    console.log("Status Data:", statusData);
 
     const socketRef = useRef(null);
 
@@ -23,6 +25,7 @@ export function useAnalysisProgress(analysisId) {
             setError(err.message || "Failed to fetch analysis results");
         } finally {
             setIsLoading(false);
+            setIsStatusOpen(false);
         }
     }
 
@@ -31,7 +34,7 @@ export function useAnalysisProgress(analysisId) {
             return;
         }
 
-        const wsUrl = getWebSocketUrl(id);
+        const wsUrl = getMockWebSocketUrl(id);
         const ws = new WebSocket(wsUrl);
         socketRef.current = ws;
 
@@ -39,14 +42,16 @@ export function useAnalysisProgress(analysisId) {
         ws.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                setStatusData(prev => ({
+                setStatusData(prev => [
                     ...prev,
-                    progress: data.progress || prev.progress,
-                    title: data.title || prev.title,
-                    message: data.message || prev.message,
-                }));
+                    {
+                        progress: data.progress || prev.progress,
+                        title: data.title || prev.title,
+                        detail: data.detail || prev.detail,
+                    }
+                ]);
 
-                if (data.progress >= 6) {
+                if (data.progress >= 100) {
                     ws.close();
                     getFinalData(id);
                 }
@@ -65,20 +70,29 @@ export function useAnalysisProgress(analysisId) {
     const startTracking = async (analysisId) => {
         setIsLoading(true);
         setError(null);
-        setStatusData(prev => ({ ...prev, analysisId }));
+        setStatusData(prev => [
+            ...prev,
+            {
+                progress: 0,
+                title: "Starting...",
+                detail: "Connecting to analysis stream..."
+            }
+        ]);
 
         try {
             const initialStatus = await checkAnalysisStatus(analysisId);
 
-            if (initialStatus.data.status === 0 || initialStatus?.data?.progress >= 6) {
+            if (initialStatus.data.status === 0) {
                 await getFinalData(analysisId);
             } else {
-                setStatusData(prev => ({
+                setStatusData(prev => [
                     ...prev,
-                    progress: initialStatus.progress || 0,
-                    title: initialStatus.title || "Resuming...",
-                    message: initialStatus.message || "Connecting to stream..."
-                }));
+                    {
+                        progress: initialStatus.progress || 0,
+                        title: initialStatus.title || "Resuming...",
+                        detail: initialStatus.detail || "Connecting to stream..."
+                    }
+                ]);
                 connectWebSocket(analysisId);
             }
         } catch (err) {
@@ -98,9 +112,9 @@ export function useAnalysisProgress(analysisId) {
     return {
         isLoading,
         error,
-        progress: statusData.progress,
-        title: statusData.title,
-        message: statusData.message,
+        statusData,
+        isStatusOpen,
+        setIsStatusOpen,
         analysisResult,
         startTracking
     }

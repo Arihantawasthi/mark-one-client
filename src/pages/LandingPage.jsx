@@ -33,11 +33,11 @@ function LandingPage() {
                     description: "Your market analysis has been initiated successfully.",
                     type: "success"
                 });
-                console.log(data);
-                navigate('/analysis');
+                navigate(`/analysis/${data.analysis_id}`);
             }
 
-            const onError = () => {
+            const onError = (e) => {
+                console.log(e);
                 showBanner({
                     title: "Error!",
                     description: "Failed to start market analysis",

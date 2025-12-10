@@ -23,7 +23,7 @@ function useProvideGoPost() {
                 throw new Error(response.message || 'Request failed');
             }
             setData(response);
-            onSuccess(data);
+            onSuccess(response);
         } catch (err) {
             onError && onError(err.message);
         } finally {

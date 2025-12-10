@@ -2,7 +2,7 @@ import { DEFAULT_HEADERS, BASE_URL } from "./apiClient";
 
 export function createMarketScoutRequest(marketQueries) {
     return {
-        url: `${BASE_URL}/get-analysis`,
+        url: `${BASE_URL}/start-query-analysis`,
         method: 'POST',
         headers: { ...DEFAULT_HEADERS },
         body: JSON.stringify({ queries: marketQueries }),
@@ -14,11 +14,11 @@ export function createGetAnalysisStatusRequest(analysisId) {
 }
 
 export function getWebSocketUrl(analysisId) {
-    return `ws://localhost:8000/api/v1/status/${analysisId}`;
+    return `ws://localhost:8000/api/v1/ws/status/${analysisId}`;
 }
 
 export function getMockWebSocketUrl(analysisId=1) {
-    return `ws://localhost:8000/api/v1/test-status`;
+    return `ws://localhost:8000/api/v1/ws/test-status`;
 }
 
 export function createGetAnalysisRequest(analysisId) {

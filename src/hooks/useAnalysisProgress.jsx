@@ -6,12 +6,7 @@ export function useAnalysisProgress(analysisId) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [analysisResult, setAnalysisResult] = useState(null);
-    const [statusData, setStatusData] = useState([{
-        progress: 0,
-        title: "Initializing...",
-        detail: "Preparing to scan...",
-        analysisId: analysisId,
-    }]);
+    const [statusData, setStatusData] = useState([]);
     const [isStatusOpen, setIsStatusOpen] = useState(true);
     console.log("Status Data:", statusData);
 
@@ -34,7 +29,7 @@ export function useAnalysisProgress(analysisId) {
             return;
         }
 
-        const wsUrl = getMockWebSocketUrl(id);
+        const wsUrl = getWebSocketUrl(id);
         const ws = new WebSocket(wsUrl);
         socketRef.current = ws;
 
@@ -70,19 +65,11 @@ export function useAnalysisProgress(analysisId) {
     const startTracking = async (analysisId) => {
         setIsLoading(true);
         setError(null);
-        setStatusData(prev => [
-            ...prev,
-            {
-                progress: 0,
-                title: "Starting...",
-                detail: "Connecting to analysis stream..."
-            }
-        ]);
 
         try {
             const initialStatus = await checkAnalysisStatus(analysisId);
 
-            if (initialStatus.data.status === 0) {
+            if (initialStatus.data.status === "completed") {
                 await getFinalData(analysisId);
             } else {
                 setStatusData(prev => [

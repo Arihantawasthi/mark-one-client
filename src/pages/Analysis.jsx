@@ -10,7 +10,7 @@ import Issues from "../components/Issues";
 import Drawer from "../components/Insights/Drawer";
 import { useParams } from "react-router-dom";
 import { useAnalysisProgress } from "../hooks/useAnalysisProgress";
-import { ChevronDown, CircleCheck, Loader } from "lucide-react";
+import { ChevronDown, CircleCheck, CircleX, Loader } from "lucide-react";
 
 function Analysis() {
     const [ currentView, setCurrentView ] = useState("insights");
@@ -35,21 +35,38 @@ function Analysis() {
         return <div className="text-red-500">Error: {error}</div>
     }
     console.log(statusData);
+    console.log(analysisResult);
 
     return (
         <div className="">
             <Navbar />
             <main className="ml-64 bg-background text-on-surface">
                 <Header currentView={currentView} setCurrentView={setCurrentView} />
-                <ProgressReport statusData={statusData} isStatusOpen={isStatusOpen} setIsStatusOpen={setIsStatusOpen} />
+                <ProgressReport
+                    statusData={statusData}
+                    isStatusOpen={isStatusOpen}
+                    setIsStatusOpen={setIsStatusOpen}
+                    isLoading={isLoading}
+                    error={error}
+                />
+                { error &&
+                    <div className="px-64 mt-16 h-full flex justify-center items-center">
+                        <div className="bg-surface w-full h-90 flex justify-center items-center rounded-4xl">
+                            <div>
+                                <p className="font-bold text-sunset-500/80 text-2xl text-center">Something went wrong!</p>
+                                <p className="text-on-surface/50 mt-4 text-center">Please try reloading the page.</p>
+                            </div>
+                        </div>
+                    </div>
+                }
 
-                { currentView === "insights" ?
+                { !isLoading && !error && currentView === "insights" ?
                     <div className="px-28 2xl:px-64">
                         <HighLevelQualitative />
                         <Averages />
                         <EngagementGraph />
                     </div>
-                    :
+                    : !isLoading && !error && currentView === "issues" &&
                     <div className="px-64 mt-16">
                         <Issues />
                         <Drawer />
@@ -60,43 +77,86 @@ function Analysis() {
     );
 }
 
-function ProgressReport({ statusData, isStatusOpen, setIsStatusOpen }) {
+function ProgressReport({ statusData, isStatusOpen, setIsStatusOpen, isLoading, error }) {
     const lastIndex = statusData.length - 1;
     const progress = statusData[lastIndex]?.progress || 0;
 
-    const title = progress >= 100 ? "Analysis Completed" : "Analysis In Progress...";
+    const processTitle = (progress, isLoading) => {
+        if (isLoading) {
+            return progress >= 100 ? "Finalizing Analysis..." : "Analysis In Progress...";
+        } else if (error) {
+            return "Analysis Failed";
+        } else {
+            return "Analysis Complete";
+        }
+
+    }
+
+    const processIcon = (progress, isLoading) => {
+        if (isLoading) {
+            return progress >= 100 ? <CircleCheck size={24} className="text-green-500" /> : <Loader size={24} className="text-primary-500 animate-spin" />;
+        } else if (error) {
+            return <CircleX size={24} className="text-red-500" />;
+        } else {
+            return <CircleCheck size={24} className="text-green-500" />;
+        }
+    }
+
+    const processClass = (progress, isLoading) => {
+        if (isLoading) {
+            return progress >= 100 ? "text-green-500" : "text-primary-500";
+        } else if (error) {
+            return "text-red-500";
+        } else {
+            return "text-green-500";
+        }
+    }
 
     return (
         <div className="px-64 2xl:px-64 mt-12 w-full rounded-2xl text-on-surface">
             <div className="w-full bg-surface px-6 py-4 rounded-2xl">
                 <div className="flex justify-between">
                     <div className="flex gap-x-4 items-center">
-                        { progress >= 100 ?
-                            <CircleCheck size={24} className="text-green-500" />
-                            :
-                            <Loader size={24} className="text-primary-500 animate-spin" />
-                        }
-                        <h1 className={`font-bold tracking-wide uppercase ${progress >= 100 ? "text-green-500" : "text-primary-500"} `}>{title}</h1>
+                        { processIcon(progress, isLoading) }
+                        <h1 className={`font-bold tracking-wide uppercase ${ processClass(progress, isLoading) } `}>{ processTitle(progress, isLoading) }</h1>
                     </div>
                     <ChevronDown size={24} className={`cursor-pointer transiton-all ${isStatusOpen ? "rotate-180" : "" }`} onClick={() => setIsStatusOpen(prev => !prev)} />
                 </div>
-                { isStatusOpen && <ProgressReportData statusData={statusData} /> }
+                { isStatusOpen && <ProgressReportData statusData={statusData} error={error} /> }
 
             </div>
         </div>
     )
 }
 
-function ProgressReportData({ statusData }) {
+function ProgressReportData({ statusData, error }) {
     const lastIndex = statusData.length - 1;
     const progress = statusData[lastIndex]?.progress || 0;
+
+    const progressBarColor = () => {
+        if (error) {
+            return "bg-red-500";
+        } else if (progress >= 100) {
+            return "bg-green-500";
+        } else {
+            return "bg-primary-500";
+        }
+    }
+
+    const progressBarWidth = () => {
+        if (error) {
+            return "100%";
+        } else {
+            return `${progress}%`;
+        }
+    }
 
     return (
         <div className="mt-4">
             <div className="w-full h-1 bg-background rounded-2xl">
                 <div
-                    className={`h-1 transition-all duration-500 ease-out ${progress >= 100 ? "bg-green-500" : "bg-primary-500" } rounded-2xl`}
-                    style={{ width: `${progress}%` }}
+                    className={`h-1 transition-all duration-500 ease-out ${ progressBarColor() } rounded-2xl`}
+                    style={{ width: progressBarWidth() }}
                 ></div>
             </div>
             {statusData.map((status, index) => {

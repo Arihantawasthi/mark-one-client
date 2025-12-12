@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar/Navbar";
 import Header from "../components/Header";
 
 import HighLevelQualitative from "../components/Insights/HighLevelQualitative";
@@ -24,6 +24,7 @@ function Analysis() {
         analysisResult,
         startTracking
     } = useAnalysisProgress(analysisId);
+    const [selectedIssue, setSelectedIssue] = useState(null);
 
     useEffect(() => {
         if (analysisId) {
@@ -36,11 +37,14 @@ function Analysis() {
     }
     console.log(statusData);
     console.log(analysisResult);
+    const agg_analysis = analysisResult?.data?.agg_analysis || {};
+    const issues = analysisResult?.data?.issue_analyses || [];
+    console.log(isLoading);
 
     return (
         <div className="">
             <Navbar />
-            <main className="ml-64 bg-background text-on-surface">
+            <main className="ml-64 relative bg-background text-on-surface overflow-hidden">
                 <Header currentView={currentView} setCurrentView={setCurrentView} />
                 <ProgressReport
                     statusData={statusData}
@@ -49,8 +53,9 @@ function Analysis() {
                     isLoading={isLoading}
                     error={error}
                 />
+
                 { error &&
-                    <div className="px-64 mt-16 h-full flex justify-center items-center">
+                    <div className="px-28 2xl:px-64 mt-16 h-full flex justify-center items-center">
                         <div className="bg-surface w-full h-90 flex justify-center items-center rounded-4xl">
                             <div>
                                 <p className="font-bold text-sunset-500/80 text-2xl text-center">Something went wrong!</p>
@@ -62,14 +67,18 @@ function Analysis() {
 
                 { !isLoading && !error && currentView === "insights" ?
                     <div className="px-28 2xl:px-64">
-                        <HighLevelQualitative />
-                        <Averages />
-                        <EngagementGraph />
+                        <HighLevelQualitative
+                            overallTone={agg_analysis.overall_tone}
+                            overallIntent={agg_analysis.overall_intent}
+                            overallSummary={agg_analysis.overall_summary}
+                        />
+                        <Averages agg_analysis={agg_analysis} />
+                        <EngagementGraph engagement_stats={agg_analysis.engagement_graph} />
                     </div>
                     : !isLoading && !error && currentView === "issues" &&
-                    <div className="px-64 mt-16">
-                        <Issues />
-                        <Drawer />
+                    <div className="px-28 2xl:px-64 my-16">
+                        <Issues issues={issues} selectedIssue={selectedIssue} setSelectedIssue={setSelectedIssue} />
+                        <Drawer selectedIssue={selectedIssue} setSelectedIssue={setSelectedIssue} />
                     </div>
                 }
             </main>
@@ -113,7 +122,7 @@ function ProgressReport({ statusData, isStatusOpen, setIsStatusOpen, isLoading, 
     }
 
     return (
-        <div className="px-64 2xl:px-64 mt-12 w-full rounded-2xl text-on-surface">
+        <div className="px-28 2xl:px-64 mt-12 w-full rounded-2xl text-on-surface">
             <div className="w-full bg-surface px-6 py-4 rounded-2xl">
                 <div className="flex justify-between">
                     <div className="flex gap-x-4 items-center">

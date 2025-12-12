@@ -24,24 +24,13 @@ ChartJS.register(
 );
 
 
-function EngagementGraph() {
-    const MOCK_INSIGHTS = {
-        engagement_graph: [
-            { word_count: 500, engagement_score: 20 },
-            { word_count: 1000, engagement_score: 35 },
-            { word_count: 1500, engagement_score: 50 },
-            { word_count: 2000, engagement_score: 40 },
-            { word_count: 2500, engagement_score: 38 },
-            { word_count: 3000, engagement_score: 25 },
-        ],
-    };
-
+function EngagementGraph({ engagement_stats }) {
     const data = {
-        labels: MOCK_INSIGHTS.engagement_graph.map(point => point.word_count),
+        labels: engagement_stats.map(point => point.word_count),
         datasets: [
             {
                 label: 'Engagement Score',
-                data: MOCK_INSIGHTS.engagement_graph.map(point => point.engagement_score),
+                data: engagement_stats.map(point => point.engagement_score),
                 borderColor: 'rgba(234, 179, 10, 0.5)',
                 backgroundColor: 'rgba(234, 179, 10, 1)',
                 pointRadius: 4,

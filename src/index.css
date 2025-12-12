@@ -60,6 +60,7 @@ body {
     display: flex;
     justify-content: center;
     min-height: 100%;
+    overflow-x: hidden;
 }
 
 @keyframes shake {
@@ -86,4 +87,31 @@ body {
 
 .animate-slide-in {
     animation: slide-in 0.4s ease-out forwards;
+}
+
+.c-scrollbar {
+    overflow-y: auto;
+}
+
+.c-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.c-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.c-scrollbar::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 999px;
+    transition: background-color 0.3s ease;
+}
+
+.c-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-border);
+}
+
+.c-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
 }

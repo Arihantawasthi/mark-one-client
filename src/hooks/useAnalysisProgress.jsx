@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { checkAnalysisStatus, getAnalysis } from "../api/apiClient";
+import { checkAnalysisStatus, getAnalysis, getProgressStatus } from "../api/apiClient";
 import { getMockWebSocketUrl, getWebSocketUrl } from "../api/requests";
 
 export function useAnalysisProgress(analysisId) {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [analysisResult, setAnalysisResult] = useState(null);
     const [statusData, setStatusData] = useState([]);
@@ -12,10 +12,21 @@ export function useAnalysisProgress(analysisId) {
 
     const socketRef = useRef(null);
 
+    const getAnalysisStatus = async id => {
+        try {
+            const status = await getProgressStatus(id);
+            setStatusData(status?.data?.process_status || []);
+        } catch (err) {
+            setError(err.message || "Failed to fetch analysis status");
+            setIsLoading(false);
+        }
+    }
+
     const getFinalData = async (id) => {
         try {
             const data = await getAnalysis(id);
             setAnalysisResult(data);
+            await getAnalysisStatus(id);
         } catch (err) {
             setError(err.message || "Failed to fetch analysis results");
         } finally {

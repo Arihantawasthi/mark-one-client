@@ -1,40 +1,6 @@
-import { useState } from "react";
 import { X, ExternalLink, User, Hash, AlignLeft, Clock, LayoutTemplate, ThumbsUp, MessageCircle, Image as ImageIcon, Activity, Target, MousePointer2, ShoppingBag } from "lucide-react";
 import { SectionHeader, Card } from "./helpers";
 
-const issueDetails = {
-    id: 1,
-    platform: "Substack",
-    title: "The Future of Tech: Trends to Watch in 2024 🚀",
-    subtitle: "An in-depth analysis of emerging technologies shaping our world.",
-    date: "2024-06-15",
-    author: "Jane Doe",
-    url: "https://example.com/issue/1",
-    overall_summary: "This issue provides a comprehensive overview of the latest trends in technology, highlighting innovations in AI, blockchain, and sustainable tech. It aims to inform readers about how these advancements will impact various industries and everyday life.",
-    overall_intent: "To educate readers about upcoming tech trends",
-    overall_tone: "Informative",
-    word_count: 2500,
-    reading_time_minutes: 12,
-    section_count: 5,
-    like_count: 120,
-    comment_count: 45,
-    image_count: 4,
-    emoji_count: 3,
-    title_emoji_count: 1,
-    subtitle_emoji_count: 0,
-    title_word_count: 8,
-    subtitle_word_count: 10,
-    addressed_user_by_name: true,
-    product_mention_count: 2,
-    ctas: [
-        { text: "Subscribe Now", type: "Subscription" },
-        { text: "Read More Articles", type: "Navigation" }
-    ],
-    ads: [
-        { brand: "TechGadgets", placement: "Sidebar" },
-        { brand: "CodeMaster", placement: "Footer" }
-    ]
-}
 
 const Badge = ({ children, color = "zinc", className = "" }) => {
     const style = {
@@ -63,19 +29,19 @@ const MetricItem = ({ icon: Icon, label, value }) => (
     </div>
 );
 
-function Drawer() {
-    const [ selectedIssue, setSelectedIssue ] = useState(issueDetails);
-    console.log(selectedIssue);
-
+function Drawer({ selectedIssue, setSelectedIssue }) {
     return (
         <div
-            className={`absolute top-0 right-0 h-full w-full md:w-[600px] bg-background border-l border-border shadow-2xl transform transition-transform duration-300 ease-out z-30 flex flex-col ${selectedIssue ? 'translate-x-0' : 'translate-x-full'}`}
+            className={`absolute top-0 right-0 h-full w-full md:w-[600px] bg-background border-l border-border
+                        shadow-2xl transform transition-transform duration-300 ease-out z-30 flex flex-col
+                        ${selectedIssue ? 'translate-x-0' : 'translate-x-full'} c-scrollbar`
+            }
         >
             {selectedIssue && (
                 <>
                     <div className="p-5 border-b border-border flex justify-between items-center bg-surface">
                         <span className="text-xs font-bold text-on-surface/50 uppercase tracking-widest">Issue Details</span>
-                        <button onClick={() => setSelectedIssue(null)} className="p-2 hover:bg-zinc-800 rounded text-zinc-400 hover:text-on-surface">
+                        <button onClick={() => setSelectedIssue(null)} className="p-2 hover:bg-zinc-800 rounded text-zinc-400 hover:text-on-surface cursor-pointer">
                             <X size={18} />
                         </button>
                     </div>
@@ -85,7 +51,7 @@ function Drawer() {
                         {/* 1. Identity & Platform */}
                         <div>
                             <div className="flex items-center space-x-2 mb-3">
-                                <Badge color={selectedIssue.platform === 'Substack' ? 'orange' : selectedIssue.platform === 'Beehiiv' ? 'accent' : 'zinc'}>
+                                <Badge color={selectedIssue.platform.toLowerCase() === 'substack' ? 'orange' : selectedIssue.platform.toLowerCase() === 'beehiiv' ? 'accent' : 'zinc'}>
                                     {selectedIssue.platform}
                                 </Badge>
                                 <span className="text-xs text-on-surface/50 font-mono">{selectedIssue.date}</span>
@@ -104,16 +70,16 @@ function Drawer() {
                         <div className="grid grid-cols-1 gap-4">
                             <Card className="p-4 bg-surface">
                                 <span className="text-xs text-on-surface/50 uppercase font-bold block mb-2">Overall Summary</span>
-                                <p className="text-sm text-on-surface leading-relaxed">{selectedIssue.overall_summary}</p>
+                                <p className="text-sm text-on-surface leading-relaxed capitalize">{selectedIssue.overall_summary}</p>
                             </Card>
                             <div className="grid grid-cols-2 gap-4">
                                 <Card className="p-4 bg-zinc-900">
                                     <span className="text-xs text-zinc-500 uppercase font-bold block mb-2">Overall Intent</span>
-                                    <p className="text-sm font-bold text-on-surface">{selectedIssue.overall_intent}</p>
+                                    <p className="text-sm font-bold text-on-surface capitalize">{selectedIssue.overall_intent}</p>
                                 </Card>
                                 <Card className="p-4 bg-zinc-900">
                                     <span className="text-xs text-zinc-500 uppercase font-bold block mb-2">Overall Tone</span>
-                                    <p className="text-sm font-bold text-on-surface">{selectedIssue.overall_tone}</p>
+                                    <p className="text-sm font-bold text-on-surface capitalize">{selectedIssue.overall_tone}</p>
                                 </Card>
                             </div>
                         </div>
@@ -183,7 +149,7 @@ function Drawer() {
                                 <div className="space-y-2">
                                     {selectedIssue.ads.length > 0 ? selectedIssue.ads.map((ad, idx) => (
                                         <div key={idx} className="p-3 bg-surface border border-border rounded text-sm text-on-surface">
-                                            <span className="text-on-surface">{ad.brand}</span> <span className="text-on-surface/60 text-[10px] uppercase ml-2">({ad.placement})</span>
+                                            <span className="text-on-surface">{ad.text}</span> <span className="text-on-surface/60 text-[10px] uppercase ml-2">({ad.type})</span>
                                         </div>
                                     )) : <p className="text-zinc-600 text-sm">No Ads detected.</p>}
                                 </div>

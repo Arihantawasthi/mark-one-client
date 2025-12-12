@@ -24,3 +24,7 @@ export function getMockWebSocketUrl(analysisId=1) {
 export function createGetAnalysisRequest(analysisId) {
     return `${BASE_URL}/analysis/${analysisId}`;
 }
+
+export function createGetProcessStatusRequest(analysisId) {
+    return `${BASE_URL}/analysis/process-status/${analysisId}`;
+}

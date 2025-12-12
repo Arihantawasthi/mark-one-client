@@ -1,4 +1,4 @@
-import { createGetAnalysisRequest, createGetAnalysisStatusRequest } from "./requests";
+import { createGetAnalysisRequest, createGetAnalysisStatusRequest, createGetProcessStatusRequest } from "./requests";
 
 export const DEFAULT_HEADERS = {
     'Content-Type': 'application/json',
@@ -54,6 +54,36 @@ export async function getAnalysis(analysisId) {
     const response = await fetch(url, opts);
     if (!response.ok) {
         throw new Error('Failed to fetch analysis data');
+    }
+    const data = await response.json();
+    return data;
+}
+
+export async function getProgressStatus(analysisId) {
+    const opts = {
+        method: "GET",
+        headers: DEFAULT_HEADERS,
+    }
+
+    const url = createGetProcessStatusRequest(analysisId);
+    const response = await fetch(url, opts);
+    if (!response.ok) {
+        throw new Error('Failed to fetch process status');
+    }
+    const data = await response.json();
+    return data;
+}
+
+export async function getAnalysesList() {
+    const opts = {
+        method: "GET",
+        headers: DEFAULT_HEADERS,
+    }
+
+    const url = `${BASE_URL}/analyses/list`;
+    const response = await fetch(url, opts);
+    if (!response.ok) {
+        throw new Error('Failed to fetch analyses list');
     }
     const data = await response.json();
     return data;

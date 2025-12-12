@@ -1,44 +1,54 @@
+import { Dot, Plus, ThumbsUp, MessageCircle, AlignLeft, Clock, Megaphone, Target, Link } from 'lucide-react';
+import TextField from "../components/TextField";
 import { useState } from 'react';
-import { Dot, Plus, ThumbsUp, MessageCircle, AlignLeft, Clock, Megaphone, Target } from 'lucide-react';
 
-function Issues() {
-    const [selectedIssue, setSelectedIssue] = useState(null);
-
-    const MOCK_ISSUES = [
-        {
-            id: 1,
-            platform: 'Substack',
-            author: 'Jane Doe',
-            title: 'The Future of Tech: Trends to Watch in 2024 🚀',
-            subtitle: 'An in-depth analysis of emerging technologies shaping our world.',
-            overall_tone: 'Informative',
-            overall_intent: 'To educate readers about upcoming tech trends',
-            like_count: 120,
-            comment_count: 45,
-            word_count: 2500,
-            reading_time_minutes: 12,
-        },
-        {
-            id: 2,
-            platform: 'Beehiiv',
-            author: 'John Smith',
-            title: 'AI in Everyday Life: How It’s Changing the Way We Live 🤖',
-            subtitle: 'Exploring the impact of artificial intelligence on daily routines.',
-            overall_tone: 'Engaging',
-            overall_intent: 'To inform and engage readers about AI advancements',
-            like_count: 95,
-            comment_count: 30,
-            word_count: 1800,
-            reading_time_minutes: 8,
-        },
-        // Add more mock issues as needed
-    ];
+const AddNewsletterLinkModal = ({ inputValue, setInputValue, setShowModal }) => {
+    const clickOutsideToClose = (e) => {
+        console.log(e.target.id);
+        if (e.target.id === "modal-background") {
+            console.log('here');
+            setInputValue("");
+            setShowModal(false);
+        }
+    }
 
     return (
-        <div className="flex flex-col max-w-7xl mx-auto h-full">
+        <div
+            id="modal-background"
+            className="fixed z-99 top-0 left-0 w-full h-full bg-background/50 backdrop-blur-md flex items-center justify-center"
+            onClick={e => clickOutsideToClose(e)}
+        >
+            <div className="bg-surface p-6 rounded-xl shadow-2xl w-[520px]">
+                <h2 className="text-lg font-bold mb-4">Add Manual Issue</h2>
+                <form className="flex flex-col space-y-4">
+                    <TextField
+                        label="Newsletter URL"
+                        type="url"
+                        placeholder="https://example.substack.com/p/issue-1"
+                        leftIcon={<Link size={16} className="text-on-surface/50" />}
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                    />
+                </form>
+            </div>
+        </div>
+    );
+}
+
+function Issues({ issues, selectedIssue, setSelectedIssue }) {
+    const [inputValue, setInputValue] = useState("");
+    const [showAddModal, setShowAddModal] = useState(false);
+
+    return (
+        <div className="flex flex-col mx-auto h-full">
+            { showAddModal && <AddNewsletterLinkModal
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                setShowModal={setShowAddModal}
+            />}
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-zinc-400 font-bold uppercase text-xs tracking-wider">
-                    {MOCK_ISSUES.length} Issues Scanned
+                    {issues.length} Issues Scanned
                 </h3>
                 <button
                     onClick={() => setShowAddModal(true)}
@@ -58,7 +68,7 @@ function Issues() {
                     <div className="col-span-4">Key Metrics</div>
                 </div>
 
-                {MOCK_ISSUES.map((issue) => (
+                {issues.map((issue) => (
                     <div
                         key={issue.id}
                         onClick={() => setSelectedIssue(issue)}
@@ -71,14 +81,15 @@ function Issues() {
                         <div className="col-span-1 md:col-span-4 flex flex-col justify-between space-y-2">
                             <div>
                                 <div className="flex flex-wrap items-center mb-2">
-                                    <Badge color={issue.platform === 'Substack' ? 'orange' : issue.platform === 'Beehiiv' ? 'accent' : 'zinc'}>
+                                    <Badge color={issue.platform.toLowerCase() === 'substack' ? 'orange' : issue.platform.toLowerCase() === 'beehiiv' ? 'accent' : 'zinc'}>
                                         {issue.platform}
                                     </Badge>
                                     <Dot size={24} className="text-on-surface/50" />
                                     <span className="text-xs text-on-surface/50 font-medium">{issue.author}</span>
                                 </div>
-                                <h3 className="font-bold text-on-surface group-hover:text-primary-500
-                                                transition-colors line-clamp-2 md:text-base truncate"
+                                <h3 className={`font-bold group-hover:text-primary-500 transition-colors line-clamp-2 md:text-base truncate
+                                                ${selectedIssue?.id === issue.id ? 'text-primary-500' : 'text-on-surface'}`
+                                }
                                 >
                                     {issue.title}
                                 </h3>
@@ -90,14 +101,14 @@ function Issues() {
                         <div className="col-span-1 md:col-span-4 flex flex-col justify-center space-y-3 py-2 md:border-l md:border-r border-border md:px-4">
                             <div className="flex items-start space-x-2">
                                 <Megaphone size={14} className="text-on-surface/50 mt-1 shrink-0" />
-                                <p className="text-sm text-on-surface/70 leading-relaxed line-clamp-1 truncate">
+                                <p className="text-sm text-on-surface/70 leading-relaxed line-clamp-1 truncate capitalize">
                                     <span className="text-on-surface/50 font-bold uppercase text-xs mr-2">Tone:</span>
                                     {issue.overall_tone}
                                 </p>
                             </div>
                             <div className="flex items-start space-x-2 mt-2">
                                 <Target size={14} className="text-on-surface/50 mt-1 shrink-0" />
-                                <p className="text-sm text-on-surface/70 leading-relaxed wrap-break-word">
+                                <p className="text-sm text-on-surface/70 leading-relaxed wrap-break-word capitalize">
                                     <span className="text-on-surface/50 font-bold uppercase text-xs mr-2">Intent:</span>
                                     {issue.overall_intent}
                                 </p>
@@ -109,7 +120,7 @@ function Issues() {
                             <div className="grid grid-cols-2 gap-6">
                                 <MiniMetric icon={ThumbsUp} label="Likes" value={issue.like_count} highlight />
                                 <MiniMetric icon={MessageCircle} label="Comments" value={issue.comment_count} />
-                                <MiniMetric icon={AlignLeft} label="Words" value={`${(issue.word_count/1000).toFixed(1)}k`} />
+                                <MiniMetric icon={AlignLeft} label="Words" value={`${(issue.word_count/1000).toFixed(2)}k`} />
                                 <MiniMetric icon={Clock} label="Time" value={`${issue.reading_time_minutes}m`} />
                             </div>
                         </div>

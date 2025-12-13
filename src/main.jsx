@@ -10,19 +10,29 @@ import Analysis from "./pages/Analysis"
 import RootErrorBoundary from "./components/RootErrorBoundary"
 import Banner from "./components/Banner"
 import { AnalysisProvider } from "./context/AnalysisProvider"
+import AppLayout from "./pages/AppLayout"
 
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <LandingPage />,
+        element: <AppLayout />,
         errorElement: <RootErrorBoundary />,
+        children: [
+            {
+                index: true,
+                element: <LandingPage />,
+            },
+            {
+                path: "analysis/:analysisId",
+                element: (
+                    <AnalysisProvider>
+                        <Analysis />
+                    </AnalysisProvider>
+                ),
+            }
+        ]
     },
-    {
-        path: "/analysis/:analysisId",
-        element: <AnalysisProvider> <Analysis /> </AnalysisProvider>,
-        errorElement: <RootErrorBoundary />,
-    }
 ]);
 
 createRoot(document.getElementById("root")).render(

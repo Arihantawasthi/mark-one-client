@@ -33,7 +33,7 @@ function Navbar() {
             className="w-64 fixed left-0 z-40 h-full bg-surface border-r border-border transition-all duration-300 ease-in-out flex flex-col"
         >
             <div className="px-4 py-5 border-b border-border flex items-center justify-between">
-                <div className="flex items-center space-x-4 font-bold text-lg" onClick={() => navigate("/")}>
+                <div className="flex items-center space-x-4 font-bold text-lg cursor-pointer" onClick={() => navigate("/")}>
                     <div
                         className="w-8 h-8 rounded flex items-center justify-center text-on-primary font-bold bg-primary-500"
                     >

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import Navbar from "../components/Navbar/Navbar";
 import Header from "../components/Header";
 
 import HighLevelQualitative from "../components/Insights/HighLevelQualitative";
@@ -18,7 +17,7 @@ function Analysis() {
     const [ currentView, setCurrentView ] = useState("insights");
     const { analysisId } = useParams()
 
-    const { issues, selectedIssue, setSelectedIssue, analysisResult } = useAnalysisContext();
+    const { selectedIssue, setSelectedIssue, analysisResult } = useAnalysisContext();
     const {
         isLoading,
         error,
@@ -34,55 +33,47 @@ function Analysis() {
         }
     }, [analysisId]);
 
-    if (error) {
-        return <div className="text-red-500">Error: {error}</div>
-    }
-    console.log(analysisResult);
     const agg_analysis = analysisResult?.data?.agg_analysis || {};
-    console.log(isLoading);
 
     return (
-        <div className="">
-            <Navbar />
-            <main className="ml-64 relative bg-background text-on-surface overflow-hidden">
-                <Header currentView={currentView} setCurrentView={setCurrentView} />
-                <ProgressReport
-                    statusData={statusData}
-                    isStatusOpen={isStatusOpen}
-                    setIsStatusOpen={setIsStatusOpen}
-                    isLoading={isLoading}
-                    error={error}
-                />
+        <>
+            <Header currentView={currentView} setCurrentView={setCurrentView} />
+            <ProgressReport
+                statusData={statusData}
+                isStatusOpen={isStatusOpen}
+                setIsStatusOpen={setIsStatusOpen}
+                isLoading={isLoading}
+                error={error}
+            />
 
-                { error &&
-                    <div className="px-28 2xl:px-64 mt-16 h-full flex justify-center items-center">
-                        <div className="bg-surface w-full h-90 flex justify-center items-center rounded-4xl">
-                            <div>
-                                <p className="font-bold text-sunset-500/80 text-2xl text-center">Something went wrong!</p>
-                                <p className="text-on-surface/50 mt-4 text-center">Please try reloading the page.</p>
-                            </div>
+            { error &&
+                <div className="px-28 2xl:px-64 mt-16 h-full flex justify-center items-center">
+                    <div className="bg-surface w-full h-90 flex justify-center items-center rounded-4xl">
+                        <div>
+                            <p className="font-bold text-sunset-500/80 text-2xl text-center">Something went wrong!</p>
+                            <p className="text-on-surface/50 mt-4 text-center">Please try reloading the page.</p>
                         </div>
                     </div>
-                }
+                </div>
+            }
 
-                { !isLoading && !error && currentView === "insights" ?
-                    <div className="px-28 2xl:px-64">
-                        <HighLevelQualitative
-                            overallTone={agg_analysis.overall_tone}
-                            overallIntent={agg_analysis.overall_intent}
-                            overallSummary={agg_analysis.overall_summary}
-                        />
-                        <Averages agg_analysis={agg_analysis} />
-                        <EngagementGraph engagement_stats={agg_analysis.engagement_graph} />
-                    </div>
-                    : !isLoading && !error && currentView === "issues" &&
+            { !isLoading && !error && currentView === "insights" ?
+                <div className="px-28 2xl:px-64">
+                    <HighLevelQualitative
+                        overallTone={agg_analysis.overall_tone}
+                        overallIntent={agg_analysis.overall_intent}
+                        overallSummary={agg_analysis.overall_summary}
+                    />
+                    <Averages agg_analysis={agg_analysis} />
+                    <EngagementGraph engagement_stats={agg_analysis.engagement_graph} />
+                </div>
+                : !isLoading && !error && currentView === "issues" &&
                     <div className="px-28 2xl:px-64 my-16">
                         <Issues />
                         <Drawer selectedIssue={selectedIssue} setSelectedIssue={setSelectedIssue} />
                     </div>
-                }
-            </main>
-        </div>
+            }
+        </>
     );
 }
 

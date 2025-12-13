@@ -77,7 +77,7 @@ function LandingPage() {
                 />
             </div>
             <button
-                className="bg-primary-500 text-on-primary px-6 py-3 rounded-2xl font-bold hover:opacity-90 transition active:scale-70 cursor-pointer"
+                className="bg-primary-500 text-on-primary px-6 py-3 rounded-2xl font-bold hover:opacity-80 transition active:scale-70 cursor-pointer"
                 onClick={handleStartAnalysis}
             >
                 { loading ? <Loader size={16} className="text-on-primary animate-spin" /> : "Start Analysis!" }
@@ -109,7 +109,7 @@ function NewsletterAnalysisCard({ isActive, onActive }) {
     return (
         <div className={`text-left bg-surface text-on-surface p-8 rounded-4xl shadow-md relative
                         mx-auto ${ isActive ? "border border-primary-500" : "border-none" }
-                        transition w-[600px] max-w-[600px] overflow-hidden
+                        transition w-[500px] max-w-[600px] overflow-hidden
                         ${ shake ? "shake border-sunset-500" : "" }`}
             onClick={onActive}
         >
@@ -172,7 +172,7 @@ function MarketScoutCard({ isActive, onActive }) {
     return (
         <div className={`text-left bg-surface text-on-surface p-8 rounded-4xl shadow-md relative
                          overflow-hidden mx-auto ${ isActive ? "border border-primary-500" : "border-none" }
-                         transition w-[600px] max-w-[600px]`}
+                         transition w-[500px] max-w-[600px]`}
             onClick={onActive}
         >
             { !isActive && <div className="absolute w-full h-full top-0 left-0 bg-background opacity-70 transition hover:opacity-50"></div> }

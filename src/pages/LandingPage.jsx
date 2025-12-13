@@ -8,12 +8,14 @@ import { validateNewsletterUrl } from '../utils/helpers';
 
 import { createMarketScoutRequest } from '../api/requests';
 import useProvideGoPost from '../hooks/useProvideGoPost';
+import { useAnalysesList } from '../components/Navbar/useAnalysesList';
 
 
 function LandingPage() {
-    const [ activeCard, setActiveCard ] = useState("market");
+    const [activeCard, setActiveCard] = useState("market");
     const navigate = useNavigate();
     const { marketQueries, newsletterLinks, showBanner } = useAppContext();
+    const { refetch } = useAnalysesList();
     const { loading, goPost } = useProvideGoPost();
 
     const handleStartAnalysis = async () => {
@@ -33,11 +35,11 @@ function LandingPage() {
                     description: "Your market analysis has been initiated successfully.",
                     type: "success"
                 });
+                refetch();
                 navigate(`/analysis/${data.analysis_id}`);
             }
 
             const onError = (e) => {
-                console.log(e);
                 showBanner({
                     title: "Error!",
                     description: "Failed to start market analysis",

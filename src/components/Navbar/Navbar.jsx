@@ -7,10 +7,12 @@ import NavHistoryError from "./NavHistoryError";
 import NavHistoryEmpty from "./NavHistoryEmpty";
 
 import { useAnalysesList } from "./useAnalysesList";
+import useAppContext from "../../context/useAppContext";
 
 
 function Navbar() {
-    const { analyses, isLoading, error, refetch } = useAnalysesList();
+    const { analyses } = useAppContext();
+    const { isLoading, error, refetch } = useAnalysesList();
     const navigate = useNavigate();
 
     const handleNewAnalysis = () => {

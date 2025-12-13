@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { getAnalysesList } from "../../api/apiClient";
+import useAppContext from "../../context/useAppContext";
 
 export function useAnalysesList() {
-    const [analyses, setAnalyses] = useState([]);
+    const { setAnalyses } = useAppContext();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -24,5 +25,5 @@ export function useAnalysesList() {
         fetchAnalyses();
     }, []);
 
-    return { analyses, isLoading, error, refetch: fetchAnalyses };
+    return { isLoading, error, refetch: fetchAnalyses };
 }

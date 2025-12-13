@@ -5,6 +5,7 @@ const AppContext = createContext(null);
 function AppProvider({ children }) {
     const [marketQueries, setMarketQueries] = useState([]);
     const [newsletterLinks, setNewsletterLinks] = useState([]);
+    const [analyses, setAnalyses] = useState([]);
     const [banner, setBanner] = useState({
         title: "",
         description: "",
@@ -60,7 +61,10 @@ function AppProvider({ children }) {
             removeNewsletterLink,
             banner,
             showBanner,
-            hideBanner
+            hideBanner,
+
+            analyses,
+            setAnalyses
         }}>
             {children}
         </AppContext.Provider>

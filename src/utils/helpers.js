@@ -20,6 +20,14 @@ export function validateNewsletterUrl(input) {
             return { valid: false, message: "URL must point to a specific newsletter." };
         }
 
+        if (url.pathname !== "/" && url.pathname !== "") {
+            return { valid: false, message: "URL must be the main newsletter URL, not an issue link." };
+        }
+
+        if (url.search || url.hash) {
+            return { valid: false, message: "URL must not contain query parameters or hashes." };
+        }
+
         return { valid: true, message: "Valid newsletter URL." };
 
     } catch (e) {

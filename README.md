@@ -1,18 +1,100 @@
-# React + Vite
+# Mark One — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fast, modern frontend for the Mark One newsletter analysis platform. This UI lets users run newsletter and market analyses, track progress in real time, and view detailed issue-level insights.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Overview
 
-## React Compiler
+Mark One provides:
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+* Real-time analysis progress via WebSockets
+* Insight dashboards (tone, intent, summaries, engagement)
+* Issue listings with detailed metrics
+* Drawer UI for deep-dive issue analytics
+* Manual issue submission with live progress
+* Global banner notifications
+* Sidebar with analysis history
 
-Note: This will impact Vite dev & build performances.
+---
 
-## Expanding the ESLint configuration
+## 🧱 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **ReactJS**
+* **React Router**
+* **TailwindCSS**
+* **WebSockets** for progress streams
+* **Context API** for global + domain state
+* **Lucide Icons**
+
+---
+
+## 📁 Structure
+
+```
+src/
+  api/              # API helpers & request builders
+  components/       # Navbar, Header, Insights, Issues, Drawer, Banner
+  context/          # AppContext, AnalysisContext
+  hooks/            # useAnalysisProgress
+  pages/            # LandingPage, Analysis
+  utils/            # Validation & helpers
+```
+
+---
+
+## ▶️ Development
+
+Install dependencies:
+
+```sh
+npm install
+```
+
+Run development server:
+
+```sh
+npm run dev
+```
+
+Build for production:
+
+```sh
+npm run build
+```
+
+---
+
+## 🌐 Environment
+
+Create `.env`:
+
+```
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+```
+
+---
+
+## 📌 Features
+
+* Start newsletter/market analysis
+* Real-time job progress UI
+* Manual issue analysis with dedicated progress tracking
+* Persisted analysis history in sidebar
+* Clean, responsive dashboard layout
+
+---
+
+## 🧠 Notes
+
+This frontend expects:
+
+* REST endpoints for analysis + issues
+* WebSocket channels for progress updates
+
+---
+
+## 📜 License
+
+Proprietary — internal use only.
+

@@ -12,7 +12,7 @@ function NavHistoryList({ analyses }) {
                     : "flex items-center space-x-2 px-4 py-3 rounded-xl cursor-pointer hover:bg-background"
             }
         >
-            <BookA size={16} className="text-primary-500" />
+            <BookA size={28} className="text-primary-500" />
             <span className="text-sm font-medium text-on-surface truncate">{ item.display_title }</span>
         </NavLink>
     )))

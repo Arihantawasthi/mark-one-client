@@ -1,12 +1,50 @@
-import { Dot, Plus, ThumbsUp, MessageCircle, AlignLeft, Clock, Megaphone, Target, Link } from 'lucide-react';
+import { Dot, Plus, ThumbsUp, MessageCircle, AlignLeft, Clock, Megaphone, Target, Link, PlusIcon, X, Loader } from 'lucide-react';
 import TextField from "../components/TextField";
 import { useState } from 'react';
+import { validateNewsletterIssueUrl } from '../utils/helpers';
+import useAppContext from '../context/useAppContext';
+import useAnalysisContext from '../context/useAnalysisContext';
+import { useParams } from 'react-router-dom';
 
-const AddNewsletterLinkModal = ({ inputValue, setInputValue, setShowModal }) => {
+const AddNewsletterLinkModal = ({ setShowModal }) => {
+    const [links, setLinks] = useState([]);
+    const [inputValue, setInputValue] = useState("");
+    const [error, setError] = useState(null);
+    const { analysisId } = useParams();
+
+    const { addManualIssues, manualLoading } = useAnalysisContext();
+
     const clickOutsideToClose = (e) => {
-        console.log(e.target.id);
         if (e.target.id === "modal-background") {
-            console.log('here');
+            setInputValue("");
+            setShowModal(false);
+        }
+    }
+
+    const addNewsletterLink = (value) => {
+        if (value.trim() === "") return;
+        const { valid, message } = validateNewsletterIssueUrl(value.trim());
+        if (!valid) {
+            setError(message);
+            return;
+        }
+        setLinks([...links, value.trim()]);
+        setInputValue("");
+    }
+
+    const removeNewsletterLink = (index) => {
+        const updatedLinks = links.filter((_, i) => i !== index);
+        setLinks(updatedLinks);
+    }
+
+    const handleManualIssueAnalysis = async () => {
+        if (links.length === 0) {
+            setError("Please add at least one newsletter URL.");
+            return;
+        }
+
+        const ok = await addManualIssues(analysisId, links);
+        if (ok) {
             setInputValue("");
             setShowModal(false);
         }
@@ -20,30 +58,77 @@ const AddNewsletterLinkModal = ({ inputValue, setInputValue, setShowModal }) => 
         >
             <div className="bg-surface p-6 rounded-xl shadow-2xl w-[520px]">
                 <h2 className="text-lg font-bold mb-4">Add Manual Issue</h2>
-                <form className="flex flex-col space-y-4">
-                    <TextField
-                        label="Newsletter URL"
-                        type="url"
-                        placeholder="https://example.substack.com/p/issue-1"
-                        leftIcon={<Link size={16} className="text-on-surface/50" />}
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                    />
-                </form>
+                <div className="flex flex-col space-y-4">
+                    { links.length > 0 &&
+                        <div className="flex items-center gap-y-2 gap-x-4 mb-2 flex-wrap">
+                            { links.map((query, index) => (
+                                <div key={index} className="flex items-center gap-x-1 bg-surface/50 text-xs rounded-xl p-2 border border-border">
+                                    <span>{ query }</span>
+                                    <X
+                                        size={16}
+                                        className="inline ml-1 cursor-pointer text-on-surface/60 hover:text-on-surface"
+                                        onClick={() => removeNewsletterLink(index)}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    }
+                    <div className="w-full flex gap-x-4 items-end">
+                        <TextField
+                            label="Newsletter URL"
+                            type="url"
+                            placeholder="https://example.substack.com/p/issue-1"
+                            leftIcon={<Link size={16} className="text-on-surface/50" />}
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            error={error}
+                        />
+                        <button
+                            className="bg-primary-500 rounded-lg p-2 hover:opacity-90 transition flex items-center justify-center active:scale-95 cursor-pointer"
+                            onClick={() => addNewsletterLink(inputValue)}
+                        >
+                            <PlusIcon size={24} className="text-on-primary" />
+                        </button>
+                    </div>
+                    <button
+                        className="bg-primary-500 text-on-primary px-6 py-3 rounded-2xl font-bold hover:opacity-90
+                                    transition active:scale-70 cursor-pointer flex justify-center"
+                        onClick={handleManualIssueAnalysis}
+                    >
+                        { manualLoading ? <Loader size={16} className="text-on-primary animate-spin" /> : "Start Analysis!" }
+                    </button>
+                </div>
             </div>
         </div>
     );
 }
 
-function Issues({ issues, selectedIssue, setSelectedIssue }) {
-    const [inputValue, setInputValue] = useState("");
+function ManualLoadingCard({ progress }) {
+    return (
+        <div className="p-4 rounded-xl border border-primary-500/40 bg-primary-500/10 animate-pulse">
+            <p className="text-primary-500 font-bold uppercase text-xs tracking-wide">
+                Analyzing Manual Issues…
+            </p>
+            <p className="text-primary-300 text-sm mt-1">
+                {progress.progress}% completed
+            </p>
+            <div className="w-full h-1 bg-background mt-2 rounded">
+                <div
+                    className="h-1 bg-primary-500 transition-all"
+                    style={{ width: `${progress.progress}%` }}
+                />
+            </div>
+        </div>
+    );
+}
+
+function Issues() {
+    const { issues, selectedIssue, setSelectedIssue, manualIssueProgress } = useAnalysisContext();
     const [showAddModal, setShowAddModal] = useState(false);
 
     return (
         <div className="flex flex-col mx-auto h-full">
             { showAddModal && <AddNewsletterLinkModal
-                inputValue={inputValue}
-                setInputValue={setInputValue}
                 setShowModal={setShowAddModal}
             />}
             <div className="flex justify-between items-center mb-6">
@@ -68,6 +153,7 @@ function Issues({ issues, selectedIssue, setSelectedIssue }) {
                     <div className="col-span-4">Key Metrics</div>
                 </div>
 
+                { manualIssueProgress?.progress < 100 && <ManualLoadingCard progress={manualIssueProgress} /> }
                 {issues.map((issue) => (
                     <div
                         key={issue.id}

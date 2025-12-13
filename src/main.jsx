@@ -9,6 +9,7 @@ import LandingPage from "./pages/LandingPage"
 import Analysis from "./pages/Analysis"
 import RootErrorBoundary from "./components/RootErrorBoundary"
 import Banner from "./components/Banner"
+import { AnalysisProvider } from "./context/AnalysisProvider"
 
 
 const router = createBrowserRouter([
@@ -19,7 +20,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/analysis/:analysisId",
-        element: <Analysis />,
+        element: <AnalysisProvider> <Analysis /> </AnalysisProvider>,
         errorElement: <RootErrorBoundary />,
     }
 ]);

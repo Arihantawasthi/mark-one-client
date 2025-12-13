@@ -32,7 +32,7 @@ const MetricItem = ({ icon: Icon, label, value }) => (
 function Drawer({ selectedIssue, setSelectedIssue }) {
     return (
         <div
-            className={`absolute top-0 right-0 h-full w-full md:w-[600px] bg-background border-l border-border
+            className={`fixed top-0 right-0 h-screen w-full md:w-[600px] bg-background border-l border-border
                         shadow-2xl transform transition-transform duration-300 ease-out z-30 flex flex-col
                         ${selectedIssue ? 'translate-x-0' : 'translate-x-full'} c-scrollbar`
             }

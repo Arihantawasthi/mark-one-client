@@ -10,21 +10,23 @@ import Issues from "../components/Issues";
 import Drawer from "../components/Insights/Drawer";
 import { useParams } from "react-router-dom";
 import { useAnalysisProgress } from "../hooks/useAnalysisProgress";
+import useAnalysisContext from "../context/useAnalysisContext";
+
 import { ChevronDown, CircleCheck, CircleX, Loader } from "lucide-react";
 
 function Analysis() {
     const [ currentView, setCurrentView ] = useState("insights");
     const { analysisId } = useParams()
+
+    const { issues, selectedIssue, setSelectedIssue, analysisResult } = useAnalysisContext();
     const {
         isLoading,
         error,
         statusData,
         isStatusOpen,
         setIsStatusOpen,
-        analysisResult,
         startTracking
     } = useAnalysisProgress(analysisId);
-    const [selectedIssue, setSelectedIssue] = useState(null);
 
     useEffect(() => {
         if (analysisId) {
@@ -35,10 +37,8 @@ function Analysis() {
     if (error) {
         return <div className="text-red-500">Error: {error}</div>
     }
-    console.log(statusData);
     console.log(analysisResult);
     const agg_analysis = analysisResult?.data?.agg_analysis || {};
-    const issues = analysisResult?.data?.issue_analyses || [];
     console.log(isLoading);
 
     return (
@@ -77,7 +77,7 @@ function Analysis() {
                     </div>
                     : !isLoading && !error && currentView === "issues" &&
                     <div className="px-28 2xl:px-64 my-16">
-                        <Issues issues={issues} selectedIssue={selectedIssue} setSelectedIssue={setSelectedIssue} />
+                        <Issues />
                         <Drawer selectedIssue={selectedIssue} setSelectedIssue={setSelectedIssue} />
                     </div>
                 }

@@ -1,23 +1,23 @@
 import { useState, useRef, useEffect } from "react";
 import { checkAnalysisStatus, getAnalysis, getProgressStatus } from "../api/apiClient";
 import { getMockWebSocketUrl, getWebSocketUrl } from "../api/requests";
+import useAnalysisContext from "../context/useAnalysisContext";
 
 export function useAnalysisProgress(analysisId) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [analysisResult, setAnalysisResult] = useState(null);
-    const [statusData, setStatusData] = useState([]);
     const [isStatusOpen, setIsStatusOpen] = useState(true);
-    console.log("Status Data:", statusData);
+
+    const { setIssues, setAnalysisResult, setProgress } = useAnalysisContext();
 
     const socketRef = useRef(null);
 
-    const getAnalysisStatus = async id => {
+    const loadProgress = async id => {
         try {
             const status = await getProgressStatus(id);
-            setStatusData(status?.data?.process_status || []);
+            setProgress(status?.data?.process_status || []);
         } catch (err) {
-            setError(err.message || "Failed to fetch analysis status");
+            setError(err.message || "Failed to fetch analysis progress");
             setIsLoading(false);
         }
     }
@@ -26,7 +26,8 @@ export function useAnalysisProgress(analysisId) {
         try {
             const data = await getAnalysis(id);
             setAnalysisResult(data);
-            await getAnalysisStatus(id);
+            setIssues(data?.data?.issue_analyses || []);
+            await loadProgress(id);
         } catch (err) {
             setError(err.message || "Failed to fetch analysis results");
         } finally {
@@ -48,14 +49,7 @@ export function useAnalysisProgress(analysisId) {
         ws.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                setStatusData(prev => [
-                    ...prev,
-                    {
-                        progress: data.progress || prev.progress,
-                        title: data.title || prev.title,
-                        detail: data.detail || prev.detail,
-                    }
-                ]);
+                setProgress(prev => [...prev, data]);
 
                 if (data.progress >= 100) {
                     ws.close();
@@ -83,7 +77,7 @@ export function useAnalysisProgress(analysisId) {
             if (initialStatus.data.status === "completed") {
                 await getFinalData(analysisId);
             } else {
-                setStatusData(prev => [
+                setProgress(prev => [
                     ...prev,
                     {
                         progress: initialStatus.progress || 0,
@@ -110,10 +104,9 @@ export function useAnalysisProgress(analysisId) {
     return {
         isLoading,
         error,
-        statusData,
         isStatusOpen,
         setIsStatusOpen,
-        analysisResult,
+        statusData: useAnalysisContext().progress,
         startTracking
     }
 }

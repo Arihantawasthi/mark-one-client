@@ -88,3 +88,19 @@ export async function getAnalysesList() {
     const data = await response.json();
     return data;
 }
+
+export async function startManualIssueAnalysis(analysis_id, issue_urls) {
+    const opts = {
+        method: "POST",
+        headers: DEFAULT_HEADERS,
+        body: JSON.stringify({ analysis_id, issue_urls }),
+    }
+
+    const url = `${BASE_URL}/start-manual-issues-analysis`;
+    const response = await fetch(url, opts);
+    if (!response.ok) {
+        throw new Error('Failed to start manual issues analysis');
+    }
+    const data = await response.json();
+    return data;
+}

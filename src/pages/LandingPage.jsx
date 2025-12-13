@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import useAppContext from '../context/useAppContext';
 import { validateNewsletterUrl } from '../utils/helpers';
 
-import { createMarketScoutRequest } from '../api/requests';
+import { createMarketScoutRequest, createNewsletterAnalysisRequest } from '../api/requests';
 import useProvideGoPost from '../hooks/useProvideGoPost';
 import { useAnalysesList } from '../components/Navbar/useAnalysesList';
 
@@ -51,7 +51,35 @@ function LandingPage() {
             await goPost(url, body, { onSuccess, onError });
 
         } else if (activeCard === "newsletter") {
-            console.log(newsletterLinks);
+            if (newsletterLinks.length === 0) {
+                showBanner({
+                    title: "Error!",
+                    description: "Please add at least one newsletter link to proceed.",
+                    type: "error"
+                });
+                return;
+            }
+
+            const onSuccess = data => {
+                showBanner({
+                    title: "Success!",
+                    description: "Your newsletter analysis has been initiated successfully.",
+                    type: "success"
+                });
+                refetch();
+                navigate(`/analysis/${data.analysis_id}`);
+            }
+
+            const onError = (e) => {
+                showBanner({
+                    title: "Error!",
+                    description: "Failed to start newsletter analysis",
+                    type: "error"
+                });
+            }
+
+            const { url, body } = createNewsletterAnalysisRequest(newsletterLinks);
+            await goPost(url, body, { onSuccess, onError });
         }
     }
 

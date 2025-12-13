@@ -9,6 +9,15 @@ export function createMarketScoutRequest(marketQueries) {
     };
 }
 
+export function createNewsletterAnalysisRequest(links) {
+    return {
+        url: `${BASE_URL}/start-links-analysis`,
+        method: 'POST',
+        headers: { ...DEFAULT_HEADERS },
+        body: JSON.stringify({ links: links }),
+    }
+}
+
 export function createGetAnalysisStatusRequest(analysisId) {
     return `${BASE_URL}/analysis-status/${analysisId}`;
 }

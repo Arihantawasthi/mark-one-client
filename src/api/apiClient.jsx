@@ -4,7 +4,8 @@ export const DEFAULT_HEADERS = {
     'Content-Type': 'application/json',
 }
 
-export const BASE_URL = 'http://localhost:8000/api/v1';
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const WS_BASE_URL = import.meta.env.VITE_WS_BASE_URL;
 
 export async function postRequest(url, body) {
     const opts = {

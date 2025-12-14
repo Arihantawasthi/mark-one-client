@@ -1,4 +1,4 @@
-import { DEFAULT_HEADERS, BASE_URL } from "./apiClient";
+import { DEFAULT_HEADERS, BASE_URL, WS_BASE_URL } from "./apiClient";
 
 export function createMarketScoutRequest(marketQueries) {
     return {
@@ -23,7 +23,7 @@ export function createGetAnalysisStatusRequest(analysisId) {
 }
 
 export function getWebSocketUrl(analysisId) {
-    return `ws://localhost:8000/api/v1/ws/status/${analysisId}`;
+    return `${WS_BASE_URL}/status/${analysisId}`;
 }
 
 export function getMockWebSocketUrl(analysisId=1) {

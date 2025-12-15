@@ -7,10 +7,8 @@ RUN npm ci
 
 COPY . .
 
-COPY .env.production .env.production
-ENV NODE_ENV=production
-
-RUN npm run build
+ARG VITE_MODE=production
+RUN npm run build -- --mode $VITE_MODE
 
 EXPOSE 3000
 CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]

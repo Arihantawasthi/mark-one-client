@@ -25,6 +25,10 @@ export function useAnalysisProgress(analysisId) {
     const getFinalData = async (id) => {
         try {
             const data = await getAnalysis(id);
+            if (data.data.agg_analysis === null) {
+                throw new Error("Analysis is incomplete or corrupted");
+            }
+
             setAnalysisResult(data);
             setIssues(data?.data?.issue_analyses || []);
             await loadProgress(id);

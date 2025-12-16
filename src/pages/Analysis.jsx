@@ -51,7 +51,7 @@ function Analysis() {
                     <div className="bg-surface w-full h-90 flex justify-center items-center rounded-4xl">
                         <div>
                             <p className="font-bold text-sunset-500/80 text-2xl text-center">Something went wrong!</p>
-                            <p className="text-on-surface/50 mt-4 text-center">Please try reloading the page.</p>
+                            <p className="text-on-surface/50 mt-4 text-center">{ error }</p>
                         </div>
                     </div>
                 </div>

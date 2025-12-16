@@ -26,7 +26,7 @@ export function useAnalysisProgress(analysisId) {
         try {
             const data = await getAnalysis(id);
             if (data.data.agg_analysis === null) {
-                throw new Error("Analysis is incomplete or corrupted");
+                throw new Error("No newsletters were found for the analysis");
             }
 
             setAnalysisResult(data);

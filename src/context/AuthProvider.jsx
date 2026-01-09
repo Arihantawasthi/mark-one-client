@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { loginRequest } from "../api/apiClient";
-import { redirect } from "react-router-dom";
 
 const AuthContext = createContext(null);
 
@@ -18,16 +17,20 @@ function AuthProvider({ children }) {
     }, []);
 
     const login = async (email, password) => {
+        setLoading(true);
         const data = await loginRequest(email, password);
-        localStorage.setItem("auth", JSON.stringify(data));
-        setAuth(data);
+        if (data.requestStatus === 0) {
+            setLoading(false);
+            throw new Error(data.message || "Login failed");
+        }
+        localStorage.setItem("auth", JSON.stringify(data.data));
+        setAuth(data.data);
         setLoading(false);
     }
 
     const logout = () => {
         setAuth({});
         localStorage.removeItem("auth");
-        redirect("/login");
     }
 
     return (

@@ -1,4 +1,4 @@
-function TextField({ label, leftIcon, rightIcon, placeholder, value, onChange, error }) {
+function TextField({ label, leftIcon, rightIcon, placeholder, value, onChange, error, type="text" }) {
     return (
         <div className="flex flex-col gap-y-2 font-regular w-full">
             { label && <span className="text-on-surface/50">{ label }</span> }
@@ -14,7 +14,7 @@ function TextField({ label, leftIcon, rightIcon, placeholder, value, onChange, e
                 <input
                     className="h-6 w-full leading-6 focus:outline-none text-on-surface placeholder-on-surface/50"
                     value={value}
-                    type='text'
+                    type={type}
                     placeholder={placeholder}
                     onChange={onChange}
                 />

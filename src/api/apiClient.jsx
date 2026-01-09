@@ -2,6 +2,7 @@ import { createGetAnalysisRequest, createGetAnalysisStatusRequest, createGetProc
 
 export const DEFAULT_HEADERS = {
     'Content-Type': 'application/json',
+    'Authorization': `${localStorage.getItem('access_token') || ''}`,
 }
 
 export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -101,6 +102,23 @@ export async function startManualIssueAnalysis(analysis_id, issue_urls) {
     const response = await fetch(url, opts);
     if (!response.ok) {
         throw new Error('Failed to start manual issues analysis');
+    }
+    const data = await response.json();
+    return data;
+}
+
+
+export async function loginRequest(username, password) {
+    const opts = {
+        method: "POST",
+        headers: DEFAULT_HEADERS,
+        body: JSON.stringify({ username, password }),
+    }
+
+    const url = `${BASE_URL}/login`;
+    const response = await fetch(url, opts);
+    if (!response.ok) {
+        throw new Error('Failed to login');
     }
     const data = await response.json();
     return data;

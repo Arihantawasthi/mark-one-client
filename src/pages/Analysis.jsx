@@ -187,7 +187,6 @@ function ProgressReportData({ statusData, error }) {
             })}
         </div>
     );
-
 }
 
 export default Analysis;

@@ -1,8 +1,21 @@
 import { createGetAnalysisRequest, createGetAnalysisStatusRequest, createGetProcessStatusRequest } from "./requests";
 
+const getAuthToken = () => {
+    const authData = localStorage.getItem('auth');
+    if (authData) {
+        try {
+            const parsedAuth = JSON.parse(authData);
+            return parsedAuth.token || '';
+        } catch (error) {
+            console.error('Error parsing auth data from localStorage:', error);
+            return '';
+        }
+    }
+}
+
 export const DEFAULT_HEADERS = {
     'Content-Type': 'application/json',
-    'Authorization': `${localStorage.getItem('access_token') || ''}`,
+    'Authorization': getAuthToken()
 }
 
 export const BASE_URL = import.meta.env.VITE_API_BASE_URL;

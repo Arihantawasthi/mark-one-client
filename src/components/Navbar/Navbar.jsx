@@ -64,6 +64,7 @@ function Navbar() {
                     { content }
                 </div>
             </div>
+
             <div className="flex justify-between items-center p-4 border-t border-b border-t-border border-b-border text-sm">
                 <span className="flex gap-x-2 items-center opacity-90">
                     <User size={40} className="p-2 bg-border/80 text-white rounded-full" />

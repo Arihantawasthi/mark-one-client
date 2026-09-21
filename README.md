@@ -1,5 +1,9 @@
 # Mark One — Frontend
 
+> [!NOTE]
+> This repository contains the React/Tailwind frontend portal for Mark One. 
+> The core FastAPI asynchronous processing engine is hosted in the [mark-one](https://github.com) repository.
+
 A fast, modern frontend for the Mark One newsletter analysis platform. This UI lets users run newsletter and market analyses, track progress in real time, and view detailed issue-level insights.
 
 ---
